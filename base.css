@@ -1,0 +1,36 @@
+:root {
+    --app-c-background: rgba(70, 70, 70, 0.26);
+    --app-c-primary: #42b983;
+    --app-c-secondary: #35495e;
+}
+
+html {
+    background-color: rgb(39, 39, 39);
+}
+
+body {
+    max-width: 960px;
+    margin: 0 auto;
+    box-shadow: 0 2px 5px var(--app-c-background);
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.5em;
+}
+
+h3 {
+    font-size: 1.17em;
+}
+
+a {
+    text-decoration: underline;
+}
+
+.router-link-active {
+    color: var(--app-c-primary);
+}
