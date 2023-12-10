@@ -13,6 +13,8 @@ body {
     margin: 0 auto;
     box-shadow: 0 2px 5px var(--app-c-background);
     min-height: 100vh;
+    background-color: #131313;
+    color: #fff;
 }
 
 h1 {
@@ -33,4 +35,66 @@ a {
 
 .router-link-active {
     color: var(--app-c-primary);
+}
+
+button {
+    background-color: var(--app-c-primary);
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 0.25em;
+    cursor: pointer;
+    transition: all 0.125s ease-in-out;
+}
+
+button.secondary {
+    background-color: var(--app-c-secondary);
+}
+
+button:hover {
+    filter: brightness(1.1);
+}
+
+button:active {
+    background-color: var(--app-c-secondary);
+    color: rgb(202, 202, 202);
+    scale: 0.95;
+}
+
+button:disabled {
+    background-color: var(--app-c-background);
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background-color: var(--app-c-background);
+}
+
+button:disabled:active {
+    background-color: var(--app-c-background);
+}
+
+input {
+    padding: 0.5em 1em;
+    border-radius: 0.25em;
+    border: 1px solid var(--app-c-background);
+    background-color: var(--app-c-secondary);
+    color: #fff;
+    transition: all 0.125s ease-in-out;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--app-c-primary);
+    box-shadow: 0 0 0 2px var(--app-c-primary);
+}
+
+input:disabled {
+    background-color: var(--app-c-background);
+    cursor: not-allowed;
+}
+
+.div {
+    border-bottom: 1px solid var(--app-c-secondary);
+    margin: .5rem 0;
 }
