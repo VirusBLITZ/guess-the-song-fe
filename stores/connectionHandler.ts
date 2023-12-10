@@ -32,6 +32,9 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 const idx = room.value!.players.indexOf(croppedOnce);
                 room.value!.players.splice(idx, 1);
                 break;
+            case 'game_start_select':
+                useRouter().push(`/room/${room.value!.id}/select`);
+                break;
         }
     }
 
