@@ -62,7 +62,7 @@ const addSong = (id: string) => {
                 {{ connectionHandler.room?.id }}
             </span>
         </h1>
-        <button @click="connectionHandler.startGuessing()">
+        <button v-if="connectionHandler.isHost" @click="connectionHandler.startGuessing()">
             Start Guessing
         </button>
     </div>

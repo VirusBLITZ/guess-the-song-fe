@@ -10,6 +10,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const isHost = ref(false);
     const isLocal = ref(false);
     const isReady = ref(false);
+    const audioPlayer = ref(null as HTMLAudioElement | null);
+    const volume = ref(0.5);
 
     const handleGeneralMsg = (e: MessageEvent) => {
         const msg = String(e.data)
@@ -34,6 +36,9 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'game_start_select':
                 useRouter().push(`/room/${room.value!.id}/select`);
+                break;
+            case 'game_start_guessing':
+                useRouter().push(`/room/${room.value!.id}/guess`);
                 break;
         }
     }
@@ -192,7 +197,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         isLocal,
         isReady,
         addSongs,
-        startGuessing
+        startGuessing,
+        volume
     }
 })
 
