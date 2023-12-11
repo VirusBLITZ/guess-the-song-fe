@@ -62,7 +62,7 @@ const addSong = (id: string) => {
                 {{ connectionHandler.room?.id }}
             </span>
         </h1>
-        <button>
+        <button @click="connectionHandler.startGuessing()">
             Start Guessing
         </button>
     </div>

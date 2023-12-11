@@ -41,7 +41,11 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const getWs = async () => {
         if (!ws.value) {
             const base = useState<string>('serverBase').value;
-            ws.value = new WebSocket(`wss://${base}/ws`);
+            if (process.dev && (base.startsWith("localhost:" || base.startsWith("127.0.0.1")))) {
+                ws.value = new WebSocket(`ws://${base}/ws`);
+            } else {
+                ws.value = new WebSocket(`wss://${base}/ws`);
+            }
             ws.value.onmessage = handleGeneralMsg;
             ws.value.onopen = () => {
                 console.log('ws opened');
@@ -152,7 +156,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         ws.send(`ready_up .`);
         isReady.value = true;
     }
-    
+
     const unready = async () => {
         if (!room.value || !isReady.value) return;
         const ws = await getWs();
@@ -164,6 +168,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         if (!room.value) return;
         const ws = await getWs();
         ws.send(`add ${songId}`);
+    }
+
+    const startGuessing = async () => {
+        if (!room.value) return;
+        const ws = await getWs()
+        ws.send('start_guessing .')
     }
 
     return {
@@ -181,7 +191,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         isHost,
         isLocal,
         isReady,
-        addSongs
+        addSongs,
+        startGuessing
     }
 })
 
