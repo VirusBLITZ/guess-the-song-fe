@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import autoAnimate from '@formkit/auto-animate';
+
 type SearchItem = {
     name: string;
     type: string;
@@ -6,7 +8,7 @@ type SearchItem = {
 }
 
 const connectionHandler = useConnectionHandler();
-const query = ref('')
+const query = ref('');
 
 const handleSuggestions = (e: MessageEvent) => {
     const msg = String(e.data);
@@ -25,11 +27,25 @@ onUnmounted(async () => {
 })
 const results = ref([] as SearchItem[]);
 
-watch(query, async (q) => {
-    const ws = await connectionHandler.getWs()
-    console.log("query", q);
+let lastInput = Date.now();
+let queryCount = 0;
+let loading = false;
+const stoppedTyping = (q: string) => {
+    lastInput = Date.now();
+    loading = true;
+    setTimeout(async () => {
+        if (Date.now() - lastInput >= 500) {
+            const ws = await connectionHandler.getWs()
+            console.log("nth query: " + (++queryCount));
+            ws.send(`suggest ${q}`)
+            loading = false;
+        }
+    }, 500);
+}
 
-    ws.send(`suggest ${q}`)
+watch(query, async (q) => {
+    if (q.length <= 2) return;
+    stoppedTyping(q)
 })
 </script>
 
@@ -44,7 +60,7 @@ watch(query, async (q) => {
         <div class="div" />
 
         <ul>
-            <li v-for="result in results"
+            <li v-for="result in results" :key="result.id" v-auto-animate
                 class="bg-zinc-800 duration-150 hover:shadow-lg shadow-zinc-100 my-2 p-1 pl-4 rounded-md flex items-center justify-between hover:-translate-y-1">
                 <div>
                     <h4>
@@ -54,7 +70,8 @@ watch(query, async (q) => {
                         {{ result.type }}
                     </p>
                 </div>
-                <button class="w-7 h-7 mr-2 flex justify-center items-center"> + </button>
+                <button class="w-7 h-7 mr-2 flex justify-center items-center"
+                    @click="connectionHandler.addSongs(result.id)"> + </button>
             </li>
         </ul>
     </section>

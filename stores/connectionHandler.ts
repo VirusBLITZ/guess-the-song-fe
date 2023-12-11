@@ -160,6 +160,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         isReady.value = false;
     }
 
+    const addSongs = async (songId: string) => {
+        if (!room.value) return;
+        const ws = await getWs();
+        ws.send(`add ${songId}`);
+    }
+
     return {
         getWs,
         hostLocal,
@@ -174,7 +180,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         songsRoute,
         isHost,
         isLocal,
-        isReady
+        isReady,
+        addSongs
     }
 })
 
