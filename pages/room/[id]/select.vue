@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import autoAnimate from '@formkit/auto-animate';
-
 type SearchItem = {
     name: string;
     type: string;
@@ -9,6 +7,7 @@ type SearchItem = {
 
 const connectionHandler = useConnectionHandler();
 const query = ref('');
+const searchBox = ref<HTMLInputElement>();
 
 const handleSuggestions = (e: MessageEvent) => {
     const msg = String(e.data);
@@ -47,21 +46,33 @@ watch(query, async (q) => {
     if (q.length <= 2) return;
     stoppedTyping(q)
 })
+
+const addSong = (id: string) => {
+    query.value = '';
+    results.value = [];
+    connectionHandler.addSongs(id)
+    searchBox.value?.focus();
+}
 </script>
 
 <template>
-    <h1 class="mb-8">Select Songs
-        <span class="text-[var(--app-c-primary)]">
-            {{ connectionHandler.room?.id }}
-        </span>
-    </h1>
+    <div class="flex h-12 mb-8 justify-between items-center">
+        <h1>Select Songs
+            <span class="text-[var(--app-c-primary)]">
+                {{ connectionHandler.room?.id }}
+            </span>
+        </h1>
+        <button>
+            Start Guessing
+        </button>
+    </div>
     <section class="h-full w-full">
-        <input type="text" class="inline-block w-full" placeholder="Search for songs" v-model="query" @input="">
+        <input type="text" class="inline-block w-full" placeholder="Search for songs" v-model="query" ref="searchBox">
         <div class="div" />
 
         <ul>
             <li v-for="result in results" :key="result.id" v-auto-animate
-                class="bg-zinc-800 duration-150 hover:shadow-lg shadow-zinc-100 my-2 p-1 pl-4 rounded-md flex items-center justify-between hover:-translate-y-1">
+                class="bg-zinc-800 duration-150 hover:shadow-lg shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
                 <div>
                     <h4>
                         {{ result.name }}
@@ -70,8 +81,7 @@ watch(query, async (q) => {
                         {{ result.type }}
                     </p>
                 </div>
-                <button class="w-7 h-7 mr-2 flex justify-center items-center"
-                    @click="connectionHandler.addSongs(result.id)"> + </button>
+                <button class="w-7 h-10 mr-1 flex justify-center items-center" @click="addSong(result.id)"> + </button>
             </li>
         </ul>
     </section>
