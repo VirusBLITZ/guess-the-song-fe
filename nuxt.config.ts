@@ -3,6 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
-    ['@pinia/nuxt', { autoImports: 'defineStore' }]
+    ['@pinia/nuxt', { autoImports: 'defineStore' }],
+    '@formkit/auto-animate/nuxt'
   ],
 })
