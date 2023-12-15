@@ -12,10 +12,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const isReady = ref(false);
     const audioPlayer = ref(null as HTMLAudioElement | null);
     const volume = ref(0.5);
-    // const guessOptions = ref(null as string[] | null);
-    const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
+    const guessOptions = ref([] as string[][]);
+    // const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
 
     const handleGeneralMsg = (e: MessageEvent) => {
+        console.log('received from general hook : ', e.data);
+        
         const msg = String(e.data)
         const firstSpace = msg.indexOf(' ');
         let split = [msg, ''];
@@ -42,6 +44,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 useRouter().push(`/room/${room.value!.id}/guess`);
                 break;
             case 'game_guess_options':
+                console.log('guess options', split[1]);
+                
                 guessOptions.value = JSON.parse(split[1])
                 
         }
@@ -189,6 +193,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         if (!room.value) return;
         const ws = await getWs()
         ws.send(`guess ${guess}`)
+        guessOptions.value = [];
     }
 
     return {

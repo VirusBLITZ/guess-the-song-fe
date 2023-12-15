@@ -5,9 +5,15 @@ const volume = useState<string>('volume')
 
 <template>
     <div class="flex justify-between p-3 h-20">
-        <div>
+        <!-- desktop -->
+        <div class="hidden sm:inline-block">
             <h1>Guess The Song 🎶</h1>
             server <input type="text" v-model="serverBase">
+        </div>
+        <!-- mobile -->
+        <div class="inline-block sm:hidden">
+            <h1>GTS 🎶</h1>
+            <input type="text" v-model="serverBase">
         </div>
         <span class="flex items-center h-full">
             <ClientOnly>
