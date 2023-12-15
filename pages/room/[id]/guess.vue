@@ -15,7 +15,8 @@ const connectionHandler = useConnectionHandler();
             🔊
         </div>
         <section class="flex flex-wrap w-full justify-between">
-            <button v-for="option in connectionHandler.guessOptions" class="w-full md:w-[calc(50%-0.25rem)] mb-2">
+            <button v-for="option, i in connectionHandler.guessOptions" @click="connectionHandler.sendGuess(i)"
+                class="w-full md:w-[calc(50%-0.25rem)] mb-2">
                 {{ option }}
             </button>
         </section>

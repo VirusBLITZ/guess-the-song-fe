@@ -13,7 +13,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const audioPlayer = ref(null as HTMLAudioElement | null);
     const volume = ref(0.5);
     // const guessOptions = ref(null as string[] | null);
-    const guessOptions = ref(['Armed and Dangerous', 'Scandinavian Boy', 'Drop ']);
+    const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
 
     const handleGeneralMsg = (e: MessageEvent) => {
         const msg = String(e.data)
@@ -22,18 +22,17 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         if (firstSpace !== -1) {
             split = [msg.substring(0, firstSpace), msg.substring(firstSpace + 1)]
         }
-        // crop \"
-        const croppedOnce = split[1].substring(1, split[1].length - 1)
+        const croppedQuotationMarks = split[1].substring(1, split[1].length - 1)
         switch (split[0]) {
             case 'song_route':
                 songsRoute.value = split[1];
                 break;
             case 'user_join':
                 if (room.value && isHost && isLocal && !isReady) readyUp();
-                room.value!.players.push(croppedOnce);
+                room.value!.players.push(croppedQuotationMarks);
                 break;
             case 'user_leave':
-                const idx = room.value!.players.indexOf(croppedOnce);
+                const idx = room.value!.players.indexOf(croppedQuotationMarks);
                 room.value!.players.splice(idx, 1);
                 break;
             case 'game_start_select':
@@ -42,7 +41,9 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
             case 'game_start_guessing':
                 useRouter().push(`/room/${room.value!.id}/guess`);
                 break;
-            
+            case 'game_guess_options':
+                guessOptions.value = JSON.parse(split[1])
+                
         }
     }
 
@@ -184,6 +185,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         ws.send('start_guessing .')
     }
 
+    const sendGuess = async (guess: number) => {
+        if (!room.value) return;
+        const ws = await getWs()
+        ws.send(`guess ${guess}`)
+    }
+
     return {
         getWs,
         hostLocal,
@@ -202,7 +209,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         addSongs,
         startGuessing,
         volume,
-        guessOptions
+        guessOptions,
+        sendGuess
     }
 })
 
