@@ -1,7 +1,19 @@
 export type Room = {
     id: string;
-    players: string[];
+    players: Player[];
 }
+
+export type Player = {
+    username: string;
+    score: number;
+    isReady?: boolean;
+}
+
+const newPlayer = (username: string, isReady = undefined as boolean | undefined): Player => ({
+    username,
+    score: 0,
+    isReady: isReady,
+});
 
 export const useConnectionHandler = defineStore('connectionHandler', () => {
     const ws = ref(null as WebSocket & { usernameSet?: boolean } | null);
@@ -14,7 +26,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     // const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
 
     const handleGeneralMsg = (e: MessageEvent) => {
-        console.log('received from general hook : ', e.data);
+        console.log('[SERVER >] ', e.data);
 
         const msg = String(e.data)
         const firstSpace = msg.indexOf(' ');
@@ -29,11 +41,17 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'user_join':
                 if (room.value && isHost && isLocal && !isReady) readyUp();
-                room.value!.players.push(croppedQuotationMarks);
+                room.value!.players.push(newPlayer(croppedQuotationMarks,));
                 break;
             case 'user_leave':
-                const idx = room.value!.players.indexOf(croppedQuotationMarks);
+                const idx = room.value!.players.findIndex(p => p.username === croppedQuotationMarks);
                 room.value!.players.splice(idx, 1);
+                break;
+            case 'user_ready':
+                room.value!.players.find(p => p.username === croppedQuotationMarks)!.isReady = true;
+                break;
+            case 'user_unready':
+                room.value!.players.find(p => p.username === croppedQuotationMarks)!.isReady = false;
                 break;
             case 'game_start_select':
                 useRouter().push(`/room/${room.value!.id}/select`);
@@ -42,8 +60,6 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 useRouter().push(`/room/${room.value!.id}/guess`);
                 break;
             case 'game_guess_options':
-                console.log('guess options', split[1]);
-
                 guessOptions.value = JSON.parse(split[1])
                 break;
             case 'game_play_audio':
@@ -125,7 +141,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 const id = String(e.data).split(' ')[1];
                 room.value = {
                     id,
-                    players: [useState<string>('username').value],
+                    players: [newPlayer(useState<string>('username').value)],
                 };
                 console.log('room created', room.value);
                 ws.removeEventListener('message', handleRoomMsg);
@@ -163,7 +179,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         }
         setTimeout(() => {
             ws.removeEventListener('message', handleRoomMsg);
-            room.value?.players.push(useState<string>('username').value);
+            room.value?.players.push(newPlayer(useState<string>('username').value));
         }, 500);
         return true;
     }

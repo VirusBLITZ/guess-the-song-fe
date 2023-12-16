@@ -20,6 +20,7 @@ export const useMusicPlayer = defineStore('musicPlayer', () => {
     }
 
     const pause = () => {
+        initPlayer();
         audioPlayer.value!.pause();
     }
 

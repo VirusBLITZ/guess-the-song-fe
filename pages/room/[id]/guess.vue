@@ -25,9 +25,10 @@ const connectionHandler = useConnectionHandler();
             </button>
         </section>
         <section class="h-72 flex flex-col justify-center items-center" v-else>
-            <div class="border-[var(--app-c-secondary)] border-4 rounded-full w-12 h-12 border-r-[var(--app-c-primary)] animate-spin m-12" />
+            <div
+                class="border-[var(--app-c-secondary)] border-4 rounded-full w-12 h-12 border-r-[var(--app-c-primary)] animate-spin m-12 mt-0" />
             <h2 class="text-[var(--app-c-secondary)]">
-                waiting for server...
+                waiting for other players...
             </h2>
         </section>
     </section>
