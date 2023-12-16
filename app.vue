@@ -21,7 +21,7 @@ onMounted(() => {
     localStorage.setItem('serverBase', value)
   })
   watch(volume, (value) => {
-    useConnectionHandler().volume = Number(value) / 100
+    useMusicPlayer().volume = Number(value) / 100
     localStorage.setItem('volume', value)
   })
 })

@@ -10,14 +10,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const isHost = ref(false);
     const isLocal = ref(false);
     const isReady = ref(false);
-    const audioPlayer = ref(null as HTMLAudioElement | null);
-    const volume = ref(0.5);
     const guessOptions = ref([] as string[][]);
     // const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
 
     const handleGeneralMsg = (e: MessageEvent) => {
         console.log('received from general hook : ', e.data);
-        
+
         const msg = String(e.data)
         const firstSpace = msg.indexOf(' ');
         let split = [msg, ''];
@@ -45,9 +43,20 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'game_guess_options':
                 console.log('guess options', split[1]);
-                
+
                 guessOptions.value = JSON.parse(split[1])
-                
+                break;
+            case 'game_play_audio':
+                const serverBase = useState<string>('serverBase').value;
+                useMusicPlayer().play(`https://${serverBase}${songsRoute.value}/${split[1]}`);
+                break;
+            case 'game_ended':
+                setTimeout(() => {
+                    isReady.value = false;
+                    useMusicPlayer().pause();
+                    useRouter().push(`/room/${room.value!.id}`);
+                }, 1000);
+
         }
     }
 
@@ -112,8 +121,6 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         setUsername()
 
         async function handleRoomMsg(e: MessageEvent) {
-            console.log("received from createroom hook : ", e.data);
-
             if (String(e.data).startsWith('game_created')) {
                 const id = String(e.data).split(' ')[1];
                 room.value = {
@@ -139,8 +146,6 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
 
         async function handleRoomMsg(e: MessageEvent) {
             const msg = String(e.data)
-            console.log("received from joinroom hook : ", msg);
-
             if (msg.startsWith('game_not_found')) {
                 alert('game not found');
                 useRouter().replace(`/`);
@@ -213,7 +218,6 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         isReady,
         addSongs,
         startGuessing,
-        volume,
         guessOptions,
         sendGuess
     }
