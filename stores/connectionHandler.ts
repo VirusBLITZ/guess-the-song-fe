@@ -22,6 +22,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const isHost = ref(false);
     const isLocal = ref(false);
     const isReady = ref(false);
+    const startingIn = ref(-1);
     const guessOptions = ref([] as string[][]);
     // const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
 
@@ -52,6 +53,11 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'user_unready':
                 room.value!.players.find(p => p.username === croppedQuotationMarks)!.isReady = false;
+                startingIn.value = -1
+                break;
+            case 'game_start_at':
+                const startingAt = parseInt(split[1]);
+                startingIn.value = startingAt - Date.now();
                 break;
             case 'game_start_select':
                 useRouter().push(`/room/${room.value!.id}/select`);
@@ -69,6 +75,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
             case 'game_ended':
                 setTimeout(() => {
                     isReady.value = false;
+                    room.value?.players.forEach(p => p.isReady = false)
                     useMusicPlayer().pause();
                     useRouter().push(`/room/${room.value!.id}`);
                 }, 1000);
@@ -230,6 +237,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         room,
         songsRoute,
         isHost,
+        startingIn,
         isLocal,
         isReady,
         addSongs,
