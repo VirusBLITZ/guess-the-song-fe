@@ -15,6 +15,7 @@ const newPlayer = (username: string, isReady = undefined as boolean | undefined)
     isReady: isReady,
 });
 
+
 export const useConnectionHandler = defineStore('connectionHandler', () => {
     const ws = ref(null as WebSocket & { usernameSet?: boolean } | null);
     const room = ref(null as Room | null);
@@ -25,6 +26,10 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const startingIn = ref(-1);
     const guessOptions = ref([] as string[][]);
     // const guessOptions = ref([['Armed and Dangerous', 'Juice WRLD'], ['Scandinavian Boy', 'JOOST'], ['Drop', 'Connor Price']]);
+
+    useRouter().beforeEach(() => {
+        startingIn.value = -1;
+    })
 
     const handleGeneralMsg = (e: MessageEvent) => {
         console.log('[SERVER >] ', e.data);
