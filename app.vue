@@ -12,7 +12,9 @@ onMounted(() => {
     return localStorage.getItem('username') ?? ''
   })
   const volume = useState('volume', () => {
-    return localStorage.getItem('volume') ?? '0.5'
+    const vol = localStorage.getItem('volume') ?? '0.5'
+    useMusicPlayer().volume = Number(vol) / 100
+    return vol
   })
   watch(username, (value) => {
     localStorage.setItem('username', value)

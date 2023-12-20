@@ -41,15 +41,21 @@ onMounted(() => {
             </ul>
         </div>
         <button v-if="!connectionHandler.isReady" @click="connectionHandler.readyUp"
-            class="p-4 absolute w-[calc(100%-1rem)] sm:w-1/3 mx-auto left-0 right-0 bottom-2">Ready Up</button>
+            class="p-4 absolute w-[calc(100%-1rem)] sm:w-1/3 mx-auto left-0 right-0 bottom-3 shadow-xl shadow-[var(--app-c-secondary)]">Ready Up</button>
 
-        <span v-else class="absolute w-[calc(100%-1rem)] sm:w-1/3 mx-auto left-0 right-0 bottom-2">
+        <span v-else
+            class="absolute w-[calc(100%-1rem)] sm:w-1/3 mx-auto left-0 right-0 bottom-3 overflow-clip rounded-md shadow-xl shadow-[var(--app-c-primary)]">
             <button @click="connectionHandler.unready" class="relative left-0 top-0 p-4 w-full bg-transparent z-[15]">
                 Unready
             </button>
-            <span class="absolute h-full bg-[var(--app-c-secondary)] w-full left-0 top-0 -z-0" />
-            <span class="absolute h-full bg-[var(--app-c-primary)] w-full left-0 top-0 -z-0"
-            :style="`transition-duration: ${connectionHandler.startingIn + 250}ms; width: ${animateBar ? 100 : 0}%`"></span>
+            <span class="absolute h-full bg-[var(--app-c-secondary)] w-full left-0 top-0" />
+            <span class="absolute h-full w-full left-0 top-0 blur-2xl">
+                <span
+                    class="absolute left-0 top-0 h-full bg-[var(--app-c-primary)] shadow-2xl shadow-[var(--app-c-primary)]"
+                    :style="`transition-duration: ${connectionHandler.startingIn + 250}ms; width: ${animateBar ? 100 : 0}%`" />
+            </span>
+            <span class="absolute left-0 top-0 h-full bg-[var(--app-c-primary)] shadow-2xl shadow-[var(--app-c-primary)]"
+                :style="`transition-duration: ${connectionHandler.startingIn + 250}ms; width: ${animateBar ? 100 : 0}%`" />
         </span>
     </section>
 </template>

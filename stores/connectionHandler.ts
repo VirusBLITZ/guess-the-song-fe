@@ -71,11 +71,18 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 useRouter().push(`/room/${room.value!.id}/guess`);
                 break;
             case 'game_guess_options':
-                guessOptions.value = JSON.parse(split[1])
+                guessOptions.value = JSON.parse(split[1]) as string[][];
                 break;
             case 'game_play_audio':
                 const serverBase = useState<string>('serverBase').value;
                 useMusicPlayer().play(`https://${serverBase}${songsRoute.value}/${split[1]}`);
+                break;
+            case 'leaderboard':
+                const leaderboard = JSON.parse(split[1]) as [string, string][];
+                leaderboard.forEach(([username, score]) => {
+                    const player = room.value!.players.find(p => p.username === username);
+                    if (player) player.score = parseInt(score);
+                })
                 break;
             case 'game_ended':
                 setTimeout(() => {

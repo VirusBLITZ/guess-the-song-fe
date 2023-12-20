@@ -43,6 +43,10 @@ const stoppedTyping = (q: string) => {
 }
 
 watch(query, async (q) => {
+    if (q.length === 0) {
+        results.value = [];
+        return;
+    }
     if (q.length <= 2) return;
     stoppedTyping(q)
 })
@@ -69,9 +73,16 @@ const addSong = (id: string) => {
     <section class="h-full w-full">
         <input type="text" class="inline-block w-full" placeholder="Search for songs" v-model="query" ref="searchBox">
         <div class="div" />
-
-        <ul>
-            <li v-for="result in results" :key="result.id" v-auto-animate
+        
+        <ul v-auto-animate>
+            <li v-if="loading" class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
+                <div>
+                    <h4>
+                        Loading...
+                    </h4>
+                </div>
+            </li>
+            <li v-for="result in results" :key="result.id"
                 class="bg-zinc-800 duration-150 hover:shadow-lg shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
                 <div>
                     <h4>
@@ -84,5 +95,11 @@ const addSong = (id: string) => {
                 <button class="w-7 h-10 mr-1 flex justify-center items-center" @click="addSong(result.id)"> + </button>
             </li>
         </ul>
+
+        <div v-if="!query" class="h-full w-full flex justify-center items-center">
+            <h3 class="text-center text-gray-400">
+                Search for songs to add them to the playlist
+            </h3>
+        </div>
     </section>
 </template>
