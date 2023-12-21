@@ -1,6 +1,8 @@
 export type Room = {
     id: string;
     players: Player[];
+    leaderboard?: [string, string][];
+    showLeaderboard?: boolean;
 }
 
 export type Player = {
@@ -52,6 +54,9 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
             case 'user_leave':
                 const idx = room.value!.players.findIndex(p => p.username === croppedQuotationMarks);
                 room.value!.players.splice(idx, 1);
+                if (room.value?.players[0].username === useState<string>('username').value) {
+                    isHost.value = true;
+                }
                 break;
             case 'user_ready':
                 room.value!.players.find(p => p.username === croppedQuotationMarks)!.isReady = true;
@@ -71,6 +76,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 useRouter().push(`/room/${room.value!.id}/guess`);
                 break;
             case 'game_guess_options':
+                room.value!.showLeaderboard = false;
                 guessOptions.value = JSON.parse(split[1]) as string[][];
                 break;
             case 'game_play_audio':
@@ -78,19 +84,21 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 useMusicPlayer().play(`https://${serverBase}${songsRoute.value}/${split[1]}`);
                 break;
             case 'leaderboard':
-                const leaderboard = JSON.parse(split[1]) as [string, string][];
-                leaderboard.forEach(([username, score]) => {
-                    const player = room.value!.players.find(p => p.username === username);
-                    if (player) player.score = parseInt(score);
-                })
+                room.value!.showLeaderboard = true;
+                room.value!.leaderboard = JSON.parse(split[1]) as [string, string][];
+                setTimeout(() => {
+                    if (!room.value) return;
+                    room.value!.leaderboard!.sort((a, b) => parseInt(b[1]) - parseInt(a[1]));
+                }, 500);
                 break;
             case 'game_ended':
+                room.value!.showLeaderboard = true;
                 setTimeout(() => {
                     isReady.value = false;
                     room.value?.players.forEach(p => p.isReady = false)
                     useMusicPlayer().pause();
                     useRouter().push(`/room/${room.value!.id}`);
-                }, 1000);
+                }, 2000);
 
         }
     }

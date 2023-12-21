@@ -1,15 +1,5 @@
 <script setup lang="ts">
 const connectionHandler = useConnectionHandler();
-const showLeaderboard = ref(false);
-watch(connectionHandler.room?.players!, () => {
-    if (connectionHandler.room?.players?.length) {
-        showLeaderboard.value = true;
-    }
-})
-watchEffect(() => {
-    if (!connectionHandler.guessOptions.length) return;
-    showLeaderboard.value = false;
-})
 </script>
 
 <template>
@@ -21,7 +11,8 @@ watchEffect(() => {
         </h1>
     </div>
     <div v-auto-animate>
-        <section class="h-full w-full flex justify-center items-center flex-col" v-if="!showLeaderboard">
+        <section class="h-full w-full flex justify-center items-center flex-col"
+            v-if="!connectionHandler.room?.showLeaderboard">
             <div
                 class="text-8xl border border-[var(--app-c-primary)] rounded-md w-80 h-80 flex justify-center items-center bg-opacity-75 bg-zinc-700 mb-8 shadow-lg shadow-[var(--app-c-primary)]">
                 🔊
@@ -50,10 +41,10 @@ watchEffect(() => {
             <h1 class="text-[var(--app-c-primary)] mb-2">Leaderboard</h1>
             <div class="div" />
             <ul v-auto-animate>
-                <li v-for="player, i in connectionHandler.room?.players"
+                <li v-for="[player, score], i in connectionHandler.room?.leaderboard" :id="player"
                     class="flex justify-between items-center bg-zinc-700 rounded-md p-2 mb-2">
-                    <span>{{ i + 1 }}.  {{ player.username }}</span>
-                    <span class="text-[var(--app-c-primary)] p-1 bg-zinc-600 rounded-md">{{ player.score }}</span>
+                    <span>{{ i + 1 }}. {{ player }}</span>
+                    <span class="text-[var(--app-c-primary)] p-1 bg-zinc-600 rounded-md">{{ score }}</span>
                 </li>
             </ul>
         </section>
