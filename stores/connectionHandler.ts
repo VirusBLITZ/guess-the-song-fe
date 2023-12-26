@@ -81,7 +81,11 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'game_play_audio':
                 const serverBase = useState<string>('serverBase').value;
-                useMusicPlayer().play(`https://${serverBase}${songsRoute.value}/${split[1]}`);
+                if (process.dev && (serverBase.startsWith("localhost:" || serverBase.startsWith("127.0.0.1")))) {
+                    useMusicPlayer().play(`http://${serverBase}${songsRoute.value}/${split[1]}`);
+                } else {
+                    useMusicPlayer().play(`https://${serverBase}${songsRoute.value}/${split[1]}`);
+                }
                 break;
             case 'leaderboard':
                 room.value!.showLeaderboard = true;
@@ -105,11 +109,11 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
 
     const getWs = async () => {
         if (!ws.value) {
-            const base = useState<string>('serverBase').value;
-            if (process.dev && (base.startsWith("localhost:" || base.startsWith("127.0.0.1")))) {
-                ws.value = new WebSocket(`ws://${base}/ws`);
+            const serverBase = useState<string>('serverBase').value;
+            if (process.dev && (serverBase.startsWith("localhost:" || serverBase.startsWith("127.0.0.1")))) {
+                ws.value = new WebSocket(`ws://${serverBase}/ws`);
             } else {
-                ws.value = new WebSocket(`wss://${base}/ws`);
+                ws.value = new WebSocket(`wss://${serverBase}/ws`);
             }
             ws.value.onmessage = handleGeneralMsg;
             ws.value.onopen = () => {
