@@ -13,7 +13,7 @@
     "@formkit/auto-animate": "^0.8.1",
     "@nuxt/devtools": "latest",
     "@nuxtjs/tailwindcss": "^6.10.1",
-    "nuxt": "^3.8.2",
+    "nuxt": "^3.9.0",
     "vue": "^3.3.10",
     "vue-router": "^4.2.5"
   },
