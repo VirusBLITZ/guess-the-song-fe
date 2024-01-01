@@ -2,6 +2,7 @@
 definePageMeta({
     alias: '/room/:id',
 })
+preloadRouteComponents('select')
 
 const connectionHandler = useConnectionHandler();
 const animateBar = computed(() => connectionHandler.startingIn > 0);

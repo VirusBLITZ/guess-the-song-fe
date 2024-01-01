@@ -54,7 +54,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
             case 'user_leave':
                 const idx = room.value!.players.findIndex(p => p.username === croppedQuotationMarks);
                 room.value!.players.splice(idx, 1);
-                if (room.value?.players[0].username === useState<string>('username').value) {
+                if (room.value && room.value.players[0] && room.value.players[0].username === useState<string>('username').value) {
                     isHost.value = true;
                 }
                 break;

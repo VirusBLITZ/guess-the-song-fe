@@ -1,4 +1,5 @@
 <script setup lang="ts">
+preloadRouteComponents('guess')
 type SearchItem = {
     name: string;
     type: string;

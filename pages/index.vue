@@ -1,4 +1,5 @@
 <script setup lang="ts">
+preloadRouteComponents('room/0')
 const username = useState<string>('username')
 const serverBase = useState<string>('serverBase')
 
