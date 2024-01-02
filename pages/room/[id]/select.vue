@@ -18,11 +18,13 @@ const handleSuggestions = (e: MessageEvent) => {
 }
 onMounted(async () => {
     const ws = await connectionHandler.getWs()
+    if (!ws) return;
     ws.addEventListener('message', handleSuggestions)
 })
 
 onUnmounted(async () => {
     const ws = await connectionHandler.getWs()
+    if (!ws) return;
     ws.removeEventListener('message', handleSuggestions)
 })
 const results = ref([] as SearchItem[]);
@@ -35,7 +37,8 @@ const stoppedTyping = (q: string) => {
     loading = true;
     setTimeout(async () => {
         if (Date.now() - lastInput >= 500) {
-            const ws = await connectionHandler.getWs()
+            const ws = await connectionHandler.getWs();
+            if (!ws) return;
             console.log("nth query: " + (++queryCount));
             ws.send(`suggest ${q}`)
             loading = false;
@@ -68,7 +71,7 @@ const addSong = (id: string) => {
             </span>
         </h1>
         <button v-if="connectionHandler.isHost" @click="connectionHandler.startGuessing()">
-            Start Guessing
+            start guessing ▶
         </button>
     </div>
     <section class="h-[calc(100%-5rem)] w-full">
@@ -106,7 +109,12 @@ const addSong = (id: string) => {
     </section>
     <span
         class="bg-[#131313] hidden 2xl:inline-block border border-[var(--app-c-secondary)] absolute -bottom-full mx-auto left-[calc(960px+17rem)] right-0 xl:top-44 xl:max-h-[calc(100%-11.5rem)] xl:h-fit xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)]">
-        <h1 class="text-xl text-center my-2">added songs 📑</h1>
+        <h1 class="text-xl text-center my-2">
+            <span class="font-semibold w-7 h-7 bg-[var(--app-c-secondary)] rounded-md inline-block text-center shadow-md shadow-[var(--app-c-primary)]">
+                {{ connectionHandler.room?.ownsongs.length }}
+            </span>
+            added songs 📑
+        </h1>
         <div class="div" />
         <ul v-auto-animate class="px-2">
             <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
@@ -119,7 +127,15 @@ const addSong = (id: string) => {
                         {{ song[1] }}
                     </p>
                 </div>
-                <button class="w-7 h-10 mr-1 flex justify-center items-center !bg-red-900 font-bold" @click="connectionHandler.removeSong(i)"> 🗑️ </button>
+                <button class="w-7 h-10 mr-1 flex justify-center items-center !bg-red-900 font-bold"
+                    @click="connectionHandler.removeSong(i)"> 🗑️ </button>
+            </li>
+            <li v-if="connectionHandler.room?.ownsongs.length === 0" class="text-center text-gray-400 m-4 mb-5">
+                No songs added yet 👀
+                <br>
+                <span class="text-gray-500">
+                    Search for songs to add them to the playlist
+                </span>
             </li>
         </ul>
     </span>

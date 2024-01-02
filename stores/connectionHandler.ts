@@ -1,10 +1,19 @@
+import { swapRemove } from "./util";
+
 export type Room = {
     id: string;
     players: Player[];
     leaderboard?: [string, string][];
     showLeaderboard?: boolean;
     ownsongs: string[][];
+    downloadQueue: string[][];
 }
+const defaultRoom: () => Room = () => ({
+    id: '',
+    players: [],
+    ownsongs: [],
+    downloadQueue: [],
+})
 
 export type Player = {
     username: string;
@@ -18,6 +27,13 @@ const newPlayer = (username: string, isReady = undefined as boolean | undefined)
     isReady: isReady,
 });
 
+export const restoreRoom = () => {
+    if (!!!useConnectionHandler().room && typeof useRoute().params.id === 'string') {
+        setTimeout(() => {
+            useConnectionHandler().joinRoom(useRoute().params.id as string)
+        }, 1000)
+    }
+}
 
 export const useConnectionHandler = defineStore('connectionHandler', () => {
     const ws = ref(null as WebSocket & { usernameSet?: boolean } | null);
@@ -79,7 +95,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'removed_song':
                 const idx2 = parseInt(split[1]);
-                room.value!.ownsongs.splice(idx2, 1);
+                swapRemove(room.value!.ownsongs, idx2);
                 break;
             case 'game_start_guessing':
                 useRouter().push(`/room/${room.value!.id}/guess`);
@@ -111,26 +127,34 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                     room.value?.players.forEach(p => p.isReady = false)
                     useMusicPlayer().pause();
                     useRouter().push(`/room/${room.value!.id}`);
+
+                    if (!room.value) return;
+                    room.value.ownsongs = [];
+                    room.value.downloadQueue = [];
                 }, 2000);
 
         }
     }
 
     const getWs = async () => {
+        if (!process.client) return;
         if (!ws.value) {
             const serverBase = useState<string>('serverBase').value;
+            if (!serverBase) return;
+
             if (process.dev && (serverBase.startsWith("localhost:" || serverBase.startsWith("127.0.0.1")))) {
                 ws.value = new WebSocket(`ws://${serverBase}/ws`);
             } else {
                 ws.value = new WebSocket(`wss://${serverBase}/ws`);
             }
             ws.value.onmessage = handleGeneralMsg;
-            ws.value.onopen = () => {
-                console.log('ws opened');
-            }
+
             // await connction open
-            await new Promise((resolve, reject) => {
-                ws.value!.onopen = resolve;
+            await new Promise<void>((resolve, reject) => {
+                ws.value!.onopen = () => {
+                    console.log('CONNECTION WITH API ESTABLISHED');
+                    resolve()
+                };
                 ws.value!.onerror = reject;
             });
         }
@@ -139,6 +163,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
 
     const setUsername = async (username = useState<string>('username').value) => {
         const ws = await getWs();
+        if (!ws) return;
         if (ws.usernameSet || !!!username) return;
 
         ws.send(`set_username ${username}`);
@@ -173,19 +198,20 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
 
     const createRoom = async () => {
         isReady.value = false;
+        unready()
         const ws = await getWs();
+        if (!ws) return;
         setUsername()
 
         async function handleRoomMsg(e: MessageEvent) {
             if (String(e.data).startsWith('game_created')) {
                 const id = String(e.data).split(' ')[1];
                 room.value = {
+                    ...defaultRoom(),
                     id,
-                    players: [newPlayer(useState<string>('username').value)],
-                    ownsongs: [],
+                    players: [newPlayer(useState<string>('username').value, false)],
                 };
-                console.log('room created', room.value);
-                ws.removeEventListener('message', handleRoomMsg);
+                ws!.removeEventListener('message', handleRoomMsg);
                 useRouter().push(`/room/${id}`);
             }
         }
@@ -199,6 +225,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
 
         isReady.value = false;
         const ws = await getWs();
+        if (!ws) return false;
         await setUsername();
 
         async function handleRoomMsg(e: MessageEvent) {
@@ -215,9 +242,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
 
         ws.send(`join ${id}`)
         room.value = {
+            ...defaultRoom(),
             id,
-            players: [],
-            ownsongs: [],
         }
         setTimeout(() => {
             ws.removeEventListener('message', handleRoomMsg);
@@ -229,6 +255,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const readyUp = async () => {
         if (!room.value || isReady.value) return;
         const ws = await getWs();
+        if (!ws) return;
         ws.send(`ready_up .`);
         isReady.value = true;
     }
@@ -236,6 +263,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const unready = async () => {
         if (!room.value || !isReady.value) return;
         const ws = await getWs();
+        if (!ws) return;
         ws.send(`unready .`);
         isReady.value = false;
     }
@@ -243,24 +271,28 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
     const addSongs = async (songId: string) => {
         if (!room.value) return;
         const ws = await getWs();
+        if (!ws) return;
         ws.send(`add ${songId}`);
     }
 
     const removeSong = async (currendSongIdx: number) => {
         if (!room.value) return;
         const ws = await getWs();
+        if (!ws) return;
         ws.send(`remove ${currendSongIdx}`);
     }
 
     const startGuessing = async () => {
         if (!room.value) return;
         const ws = await getWs()
+        if (!ws) return;
         ws.send('start_guessing .')
     }
 
     const sendGuess = async (guess: number) => {
         if (!room.value) return;
         const ws = await getWs()
+        if (!ws) return;
         ws.send(`guess ${guess}`)
         guessOptions.value = [];
     }

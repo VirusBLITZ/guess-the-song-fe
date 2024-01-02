@@ -1,6 +1,10 @@
 <script setup>
 import './base.css';
-onMounted(() => {
+
+const initState = () => {
+  if (!process.client) {
+    return
+  }
   if (!process.client) {
     return
   }
@@ -26,7 +30,9 @@ onMounted(() => {
     useMusicPlayer().volume = Number(value) / 100
     localStorage.setItem('volume', value)
   })
-})
+}
+
+initState()
 </script>
 
 <template>

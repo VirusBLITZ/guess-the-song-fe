@@ -6,14 +6,6 @@ preloadRouteComponents('select')
 
 const connectionHandler = useConnectionHandler();
 const animateBar = computed(() => connectionHandler.startingIn > 0);
-
-onMounted(() => {
-    if (!!!connectionHandler.room && typeof useRoute().params.id === 'string') {
-        setTimeout(() => {
-            connectionHandler.joinRoom(useRoute().params.id as string)
-        }, 1000)
-    }
-})
 </script>
 
 <template>
@@ -28,9 +20,13 @@ onMounted(() => {
             class="bg-stone-800 p-2 mx-auto sm:mt-12 w-[calc(100%-1rem)] sm:w-1/3 shadow-lg shadow-[var(--app-c-primary)] border border-[var(--app-c-primary)] rounded-md">
             <h3>Players</h3>
             <div class="div"></div>
-            <ul class="relative" v-auto-animate>
+            <ul class="relative min-h-[2rem]" v-auto-animate>
+                <li v-if="!connectionHandler.room" class="indent-1">
+                    <Spinner class="h-4 w-4 inline-block p-0 m-0 -mb-[.15rem]" />
+                    Joining...
+                </li>
                 <li class="ml-5 w-fit px-2 rounded-md" v-for="player in connectionHandler.room?.players"
-                    :id="player.username">
+                    :id="player.username" :key="player.username">
                     {{ player.username }}
                     <span class="absolute left-2" v-auto-animate>
                         <span v-if="player.isReady === undefined" class="text-[var(--app-c-secondary)]">?</span>

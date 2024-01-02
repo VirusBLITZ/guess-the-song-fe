@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const connection = useConnectionHandler();
 
+onMounted(() => {
+    restoreRoom();
+})
+
 const mode = computed(() => {
     if (connection.isLocal && connection.isHost) {
         return 'HOSTING LOCAL'
