@@ -3,6 +3,7 @@ export type Room = {
     players: Player[];
     leaderboard?: [string, string][];
     showLeaderboard?: boolean;
+    ownsongs: string[][];
 }
 
 export type Player = {
@@ -71,6 +72,14 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'game_start_select':
                 useRouter().push(`/room/${room.value!.id}/select`);
+                break;
+            case 'added_song':
+                const song = JSON.parse(split[1]) as string[];
+                room.value!.ownsongs.push(song);
+                break;
+            case 'removed_song':
+                const idx2 = parseInt(split[1]);
+                room.value!.ownsongs.splice(idx2, 1);
                 break;
             case 'game_start_guessing':
                 useRouter().push(`/room/${room.value!.id}/guess`);
@@ -173,6 +182,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 room.value = {
                     id,
                     players: [newPlayer(useState<string>('username').value)],
+                    ownsongs: [],
                 };
                 console.log('room created', room.value);
                 ws.removeEventListener('message', handleRoomMsg);
@@ -207,6 +217,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         room.value = {
             id,
             players: [],
+            ownsongs: [],
         }
         setTimeout(() => {
             ws.removeEventListener('message', handleRoomMsg);
@@ -233,6 +244,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         if (!room.value) return;
         const ws = await getWs();
         ws.send(`add ${songId}`);
+    }
+
+    const removeSong = async (currendSongIdx: number) => {
+        if (!room.value) return;
+        const ws = await getWs();
+        ws.send(`remove ${currendSongIdx}`);
     }
 
     const startGuessing = async () => {
@@ -265,6 +282,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         isLocal,
         isReady,
         addSongs,
+        removeSong,
         startGuessing,
         guessOptions,
         sendGuess

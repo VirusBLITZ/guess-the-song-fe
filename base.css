@@ -4,8 +4,13 @@
     --app-c-secondary: #35495e;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 html {
     background-color: rgb(25, 25, 25);
+    overflow-y: hidden;
 }
 
 body {

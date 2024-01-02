@@ -31,7 +31,7 @@ onMounted(() => {
 
 <template>
   <Header />
-  <div class="p-4 w-full h-[calc(100vh-)]">
+  <div class="p-4 w-full h-[calc(100vh-5rem)] overflow-y-scroll">
     <NuxtPage />
   </div>
 </template>

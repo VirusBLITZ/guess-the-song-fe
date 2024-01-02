@@ -22,7 +22,7 @@ onMounted(() => {
             {{ connectionHandler.room?.id }}
         </span>
     </h1>
-    <section class="h-full w-full">
+    <section class="grow w-full">
         <div class="div" />
         <div
             class="bg-stone-800 p-2 mx-auto sm:mt-12 w-[calc(100%-1rem)] sm:w-1/3 shadow-lg shadow-[var(--app-c-primary)] border border-[var(--app-c-primary)] rounded-md">

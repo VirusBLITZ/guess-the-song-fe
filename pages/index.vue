@@ -14,7 +14,7 @@ const roomId = ref('')
     </h2>
 
     <input type="text" class="block w-42 mx-auto text-center" placeholder="Username" v-model="username">
-    <main class="w-full h-full md:flex justify-center items-center">
+    <main class="w-full md:flex items-center">
         <div>
             <Card title="Host Local 🎉" class="hidden md:inline-block">
                 Create a game on a bigger screen with only one audio source. <br>

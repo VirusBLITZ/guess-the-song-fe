@@ -71,12 +71,13 @@ const addSong = (id: string) => {
             Start Guessing
         </button>
     </div>
-    <section class="h-full w-full">
+    <section class="h-[calc(100%-5rem)] w-full">
         <input type="text" class="inline-block w-full" placeholder="Search for songs" v-model="query" ref="searchBox">
         <div class="div" />
-        
+
         <ul v-auto-animate>
-            <li v-if="loading" class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
+            <li v-if="loading"
+                class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
                 <div>
                     <h4>
                         Loading...
@@ -97,10 +98,29 @@ const addSong = (id: string) => {
             </li>
         </ul>
 
-        <div v-if="!query" class="h-full w-full flex justify-center items-center">
+        <div v-if="!query" class="h-[calc(100%-5rem)] w-full flex justify-center items-center">
             <h3 class="text-center text-gray-400">
                 Search for songs to add them to the playlist
             </h3>
         </div>
     </section>
+    <span
+        class="bg-[#131313] hidden 2xl:inline-block border border-[var(--app-c-secondary)] absolute -bottom-full mx-auto left-[calc(960px+17rem)] right-0 xl:top-44 xl:max-h-[calc(100%-11.5rem)] xl:h-fit xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)]">
+        <h1 class="text-xl text-center my-2">added songs 📑</h1>
+        <div class="div" />
+        <ul v-auto-animate class="px-2">
+            <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
+                class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
+                <div>
+                    <h4>
+                        {{ song[0] }}
+                    </h4>
+                    <p class="bg-zinc-900 -ml-1 mt-1 text-sm px-2 text-gray-400 w-fit rounded-md">
+                        {{ song[1] }}
+                    </p>
+                </div>
+                <button class="w-7 h-10 mr-1 flex justify-center items-center !bg-red-900 font-bold" @click="connectionHandler.removeSong(i)"> 🗑️ </button>
+            </li>
+        </ul>
+    </span>
 </template>
