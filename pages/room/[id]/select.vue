@@ -108,15 +108,16 @@ const addSong = (id: string) => {
         </div>
     </section>
     <span
-        class="bg-[#131313] hidden 2xl:inline-block border border-[var(--app-c-secondary)] absolute -bottom-full mx-auto left-[calc(960px+17rem)] right-0 xl:top-44 xl:max-h-[calc(100%-11.5rem)] xl:h-fit xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)]">
+        class="bg-[#131313] slide-in hidden 2xl:inline-flex flex-col border border-[var(--app-c-secondary)] absolute -bottom-full mx-auto left-[calc(960px+18rem)] right-0 xl:top-44 xl:max-h-[calc(100%-11.5rem)] xl:h-fit xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)] -z-10">
         <h1 class="text-xl text-center my-2">
-            <span class="font-semibold w-7 h-7 bg-[var(--app-c-secondary)] rounded-md inline-block text-center shadow-md shadow-[var(--app-c-primary)]">
+            <span
+                class="font-semibold w-7 h-7 bg-[var(--app-c-secondary)] rounded-md inline-block text-center shadow-md shadow-[var(--app-c-primary)]">
                 {{ connectionHandler.room?.ownsongs.length }}
             </span>
             added songs 📑
         </h1>
         <div class="div" />
-        <ul v-auto-animate class="px-2">
+        <ul v-auto-animate class="relative h-full px-2 inline-block overflow-y-scroll">
             <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
                 class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
                 <div>
@@ -140,3 +141,30 @@ const addSong = (id: string) => {
         </ul>
     </span>
 </template>
+
+<style scoped>
+.slide-in {
+    animation: slide-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slide-in {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0
+    }
+
+    65% {
+        opacity: 1;
+        scale: 1;
+    }
+
+    85% {
+        scale: 1.05;
+    }
+
+    100% {
+        transform: translateX(0%);
+        scale: 1;
+    }
+}
+</style>
