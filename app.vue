@@ -5,9 +5,6 @@ const initState = () => {
   if (!process.client) {
     return
   }
-  if (!process.client) {
-    return
-  }
 
   const serverBase = useState('serverBase', () => {
     return localStorage.getItem('serverBase') ?? 'gts.bltz.cloud'

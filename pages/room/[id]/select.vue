@@ -144,7 +144,7 @@ const addSong = (id: string) => {
         <div class="div" />
         <ul v-auto-animate class="relative h-full inline-block px-2 overflow-y-scroll" ref="addedSongs">
             <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
-                class="bg-zinc-800 duration-150 shadow-zinc-100 my-1 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip first:mb-[4.25rem] 2xl:first:mb-3">
+                class="bg-zinc-800 duration-150 shadow-zinc-100 my-1 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip last:mb-[4.25rem] 2xl:last:mb-3">
                 <div>
                     <h4>
                         {{ song[0] }}
