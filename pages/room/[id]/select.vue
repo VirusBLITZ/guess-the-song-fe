@@ -11,6 +11,18 @@ const showSongListOnMobile = ref(false);
 const connectionHandler = useConnectionHandler();
 const query = ref('');
 const searchBox = ref<HTMLInputElement>();
+const addedSongs = ref<HTMLUListElement>();
+
+if (connectionHandler.room) {
+    watch(connectionHandler.room.ownsongs, () => {
+        const el = addedSongs.value;
+        if (!el) return;
+        // wait for animation from auto-animate
+        setTimeout(() => {
+            el.scrollTo(0, el.scrollHeight);
+        }, 10);
+    })
+}
 
 const handleSuggestions = (e: MessageEvent) => {
     const msg = String(e.data);
@@ -120,8 +132,8 @@ const addSong = (id: string) => {
         </button>
     </template>
     <section
-        class="bg-[#131313] slide-in hidden 2xl:inline-flex flex-col border border-[var(--app-c-secondary)] absolute mx-auto 2xl:left-[calc(960px+18rem)] left-0 top-0 2xl:right-0 xl:top-44 h-full 2xl:max-h-[calc(100%-11.5rem)] 2xl:h-fit w-full 2xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)] z-10 2xl:-z-10"
-        :class="{ 'slide-up': showSongListOnMobile, 'slide-down': !showSongListOnMobile }">
+        class="bg-[#131313] slide-in hidden 2xl:-translate-x-0 2xl:inline-flex flex-col border border-[var(--app-c-secondary)] absolute mx-auto 2xl:left-[calc(960px+18rem)] left-0 top-0 2xl:right-0 xl:top-44 h-full 2xl:max-h-[calc(100%-11.5rem)] 2xl:h-fit w-full 2xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)] z-10 2xl:-z-10"
+        :class="{ 'open': showSongListOnMobile, 'closed': !showSongListOnMobile }">
         <h1 class="text-xl text-center my-2">
             <span
                 class="font-semibold w-7 h-7 bg-[var(--app-c-secondary)] rounded-md inline-block text-center shadow-md shadow-[var(--app-c-primary)]">
@@ -130,9 +142,9 @@ const addSong = (id: string) => {
             added songs 📑
         </h1>
         <div class="div" />
-        <ul v-auto-animate class="relative h-full px-2 inline-block overflow-y-scroll">
+        <ul v-auto-animate class="relative h-full inline-block px-2 overflow-y-scroll" ref="addedSongs">
             <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
-                class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip last:mb-[4.25rem] 2xl:last:mb-3">
+                class="bg-zinc-800 duration-150 shadow-zinc-100 my-1 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip first:mb-[4.25rem] 2xl:first:mb-3">
                 <div>
                     <h4>
                         {{ song[0] }}
@@ -162,18 +174,22 @@ const addSong = (id: string) => {
 
 
 @media screen and (max-width: 1536px) {
-    .slide-up {
-        animation: slide-up 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        backdrop-filter: blur(10px);
+    .slide-in {
+        animation: none;
     }
 
     .hidden {
         transform: translateY(100%);
         display: flex;
+        transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    .slide-down {
-        animation: slide-down 1s forwards;
+    .open {
+        transform: translateY(0%);
+    }
+
+    .closed {
+        transform: translateY(100%);
     }
 }
 
@@ -196,39 +212,6 @@ const addSong = (id: string) => {
     100% {
         transform: translateX(0%);
         scale: 1;
-    }
-}
-
-@keyframes slide-up {
-    0% {
-        transform: translateY(60%);
-        opacity: 0;
-    }
-
-    65% {
-        scale: 1;
-    }
-
-    85% {
-        scale: 1.05;
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(0%);
-        scale: 1;
-    }
-}
-
-@keyframes slide-down {
-    0% {
-        transform: translateY(0%);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateY(100%);
-        display: none;
     }
 }
 </style>

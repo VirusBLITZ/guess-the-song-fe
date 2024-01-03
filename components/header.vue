@@ -4,7 +4,7 @@ const volume = useState<string>('volume')
 </script>
 
 <template>
-    <div class="flex justify-between p-3 h-20 bg-transparent backdrop-blur-md">
+    <div class="flex justify-between p-3 h-20">
         <!-- desktop -->
         <div class="hidden sm:inline-block">
             <h1>Guess The Song 🎶</h1>
