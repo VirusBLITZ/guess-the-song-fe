@@ -4,7 +4,7 @@ const volume = useState<string>('volume')
 </script>
 
 <template>
-    <div class="flex justify-between p-3 h-20">
+    <div class="flex justify-between p-3 h-20 bg-transparent backdrop-blur-md">
         <!-- desktop -->
         <div class="hidden sm:inline-block">
             <h1>Guess The Song 🎶</h1>
@@ -17,10 +17,10 @@ const volume = useState<string>('volume')
         </div>
         <span class="flex items-center h-full">
             <ClientOnly>
-                <span class="mr-14 relative h-14 flex items-center group cursor-pointer">
+                <span class="mr-14 relative h-14 flex items-center group cursor-pointer z-50">
                     volume
                     <span
-                        class="absolute left-0 right-0 -translate-x-1/4 !w-28 -bottom-16 -rotate-90 bg-zinc-800 py-2 px-2 rounded-md shadow-md z-10 justify-center items-center hidden group group-hover:inline-flex">
+                        class="z-50 absolute left-0 right-0 -translate-x-1/4 !w-28 -bottom-16 -rotate-90 bg-zinc-800 py-2 px-2 rounded-md shadow-md justify-center items-center hidden group group-hover:inline-flex">
                         <input type="range" name="volume" id="volume" class="!w-24 !h-3" v-model="volume">
                     </span>
                 </span>

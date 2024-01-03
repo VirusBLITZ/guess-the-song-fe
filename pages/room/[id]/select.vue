@@ -6,6 +6,8 @@ type SearchItem = {
     id: string;
 }
 
+const showSongListOnMobile = ref(false);
+
 const connectionHandler = useConnectionHandler();
 const query = ref('');
 const searchBox = ref<HTMLInputElement>();
@@ -107,8 +109,19 @@ const addSong = (id: string) => {
             </h3>
         </div>
     </section>
-    <span
-        class="bg-[#131313] slide-in hidden 2xl:inline-flex flex-col border border-[var(--app-c-secondary)] absolute -bottom-full mx-auto left-[calc(960px+18rem)] right-0 xl:top-44 xl:max-h-[calc(100%-11.5rem)] xl:h-fit xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)] -z-10">
+    <template class="inline-block lg:hidden" v-auto-animate>
+        <button v-if="!showSongListOnMobile" @click="showSongListOnMobile = true"
+            class="z-20 fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
+            <span class="text-2xl">📑</span>
+        </button>
+        <button v-if="showSongListOnMobile" @click="showSongListOnMobile = false"
+            class="z-20 fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
+            <span class="text-2xl">🔍</span>
+        </button>
+    </template>
+    <section
+        class="bg-[#131313] slide-in hidden 2xl:inline-flex flex-col border border-[var(--app-c-secondary)] absolute mx-auto 2xl:left-[calc(960px+18rem)] left-0 top-0 2xl:right-0 xl:top-44 h-full 2xl:max-h-[calc(100%-11.5rem)] 2xl:h-fit w-full 2xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)] z-10 2xl:-z-10"
+        :class="{ 'slide-up': showSongListOnMobile, 'slide-down': !showSongListOnMobile }">
         <h1 class="text-xl text-center my-2">
             <span
                 class="font-semibold w-7 h-7 bg-[var(--app-c-secondary)] rounded-md inline-block text-center shadow-md shadow-[var(--app-c-primary)]">
@@ -119,7 +132,7 @@ const addSong = (id: string) => {
         <div class="div" />
         <ul v-auto-animate class="relative h-full px-2 inline-block overflow-y-scroll">
             <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
-                class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip">
+                class="bg-zinc-800 duration-150 shadow-zinc-100 my-2 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip last:mb-[4.25rem] 2xl:last:mb-3">
                 <div>
                     <h4>
                         {{ song[0] }}
@@ -139,13 +152,31 @@ const addSong = (id: string) => {
                 </span>
             </li>
         </ul>
-    </span>
+    </section>
 </template>
 
 <style scoped>
 .slide-in {
     animation: slide-in 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
+
+
+@media screen and (max-width: 1536px) {
+    .slide-up {
+        animation: slide-up 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        backdrop-filter: blur(10px);
+    }
+
+    .hidden {
+        transform: translateY(100%);
+        display: flex;
+    }
+
+    .slide-down {
+        animation: slide-down 1s forwards;
+    }
+}
+
 
 @keyframes slide-in {
     0% {
@@ -165,6 +196,39 @@ const addSong = (id: string) => {
     100% {
         transform: translateX(0%);
         scale: 1;
+    }
+}
+
+@keyframes slide-up {
+    0% {
+        transform: translateY(60%);
+        opacity: 0;
+    }
+
+    65% {
+        scale: 1;
+    }
+
+    85% {
+        scale: 1.05;
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(0%);
+        scale: 1;
+    }
+}
+
+@keyframes slide-down {
+    0% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100%);
+        display: none;
     }
 }
 </style>
