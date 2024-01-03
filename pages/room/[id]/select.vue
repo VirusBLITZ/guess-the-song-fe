@@ -123,11 +123,11 @@ const addSong = (id: string) => {
     </section>
     <template class="inline-block lg:hidden" v-auto-animate>
         <button v-if="!showSongListOnMobile" @click="showSongListOnMobile = true"
-            class="z-20 fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
+            class="z-[61] fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
             <span class="text-2xl">📑</span>
         </button>
         <button v-if="showSongListOnMobile" @click="showSongListOnMobile = false"
-            class="z-20 fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
+            class="z-[61] fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
             <span class="text-2xl">🔍</span>
         </button>
     </template>
@@ -182,6 +182,7 @@ const addSong = (id: string) => {
         transform: translateY(100%);
         display: flex;
         transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        z-index: 60;
     }
 
     .open {
