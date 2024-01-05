@@ -5,7 +5,7 @@
   <h3 align="center">🎶 Guess The Song - Frontend</h3>
 
   <p align="center">
-    The frontend for Guess The Song, it connects to <a href="https://github.com/VirusBLITZ/guess_the_song_backend">GTS backend</a>
+    The frontend for Guess The Song, it connects to a <a href="https://github.com/VirusBLITZ/guess_the_song_backend">GTS backend</a> instance
     <br />
     <br />
     <a href="https://gts.bltz.cloud">View Demo</a>
