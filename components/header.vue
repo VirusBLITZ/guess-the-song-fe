@@ -26,7 +26,7 @@ const volume = useState<string>('volume')
                 </span>
             </ClientOnly>
             <nav>
-                <router-link to="/">Home</router-link>
+                <RouterLink to="/">Home</RouterLink>
                 <!-- <router-link to="/about">About</router-link> -->
             </nav>
         </span>

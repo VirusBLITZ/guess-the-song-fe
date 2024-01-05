@@ -30,6 +30,7 @@ const handleSuggestions = (e: MessageEvent) => {
     const idx = msg.indexOf(' ');
     results.value = JSON.parse(msg.substring(idx + 1)) as SearchItem[]
 }
+
 onMounted(async () => {
     const ws = await connectionHandler.getWs()
     if (!ws) return;
@@ -121,6 +122,8 @@ const addSong = (id: string) => {
             </h3>
         </div>
     </section>
+
+    <!-- mobile FAB -->
     <template class="inline-block lg:hidden" v-auto-animate>
         <button v-if="!showSongListOnMobile" @click="showSongListOnMobile = true"
             class="z-[61] fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
@@ -131,6 +134,7 @@ const addSong = (id: string) => {
             <span class="text-2xl">🔍</span>
         </button>
     </template>
+
     <section
         class="bg-[#131313] slide-in hidden 2xl:-translate-x-0 2xl:inline-flex flex-col border border-[var(--app-c-secondary)] absolute mx-auto 2xl:left-[calc(960px+18rem)] left-0 top-0 2xl:right-0 xl:top-44 h-full 2xl:max-h-[calc(100%-11.5rem)] 2xl:h-fit w-full 2xl:w-64 rounded-md shadow-lg shadow-[var(--app-c-primary)] z-10 2xl:-z-10"
         :class="{ 'open': showSongListOnMobile, 'closed': !showSongListOnMobile }">

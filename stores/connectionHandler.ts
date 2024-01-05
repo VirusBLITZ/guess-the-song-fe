@@ -69,7 +69,8 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 room.value!.players.push(newPlayer(croppedQuotationMarks,));
                 break;
             case 'user_leave':
-                const idx = room.value!.players.findIndex(p => p.username === croppedQuotationMarks);
+                if (!room.value) return;
+                const idx = room.value.players.findIndex(p => p.username === croppedQuotationMarks);
                 room.value!.players.splice(idx, 1);
                 if (room.value && room.value.players[0] && room.value.players[0].username === useState<string>('username').value) {
                     isHost.value = true;
@@ -252,6 +253,19 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         return true;
     }
 
+    const leaveRoom = async () => {
+        if (!room.value) return;
+        const ws = await getWs();
+        if (!ws) return;
+        ws.send(`leave .`);
+        room.value = null;
+        isHost.value = false;
+        isReady.value = false;
+        startingIn.value = -1;
+        useMusicPlayer().pause();
+        useRouter().replace(`/`);
+    }
+
     const readyUp = async () => {
         if (!room.value || isReady.value) return;
         const ws = await getWs();
@@ -303,6 +317,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         hostOnline,
         createRoom,
         joinRoom,
+        leaveRoom,
         joinLocal,
         joinOnline,
         readyUp,

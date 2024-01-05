@@ -34,7 +34,7 @@ initState()
 
 <template>
   <Header />
-  <div class="p-4 w-full h-[calc(100vh-5rem)] overflow-y-scroll">
+  <div class="p-4 w-full h-[calc(100dvh-5rem)] overflow-y-scroll">
     <NuxtPage />
   </div>
 </template>

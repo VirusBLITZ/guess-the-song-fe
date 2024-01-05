@@ -6,6 +6,8 @@ const serverBase = useState<string>('serverBase')
 const connection = useConnectionHandler();
 
 const roomId = ref('')
+
+onMounted(() => connection.leaveRoom())
 </script>
 
 <template>
@@ -35,14 +37,16 @@ const roomId = ref('')
             <Card title="Join Local 🚪">
                 Join the party without playing the songs on your own device.
                 <template #footer>
-                    <input type="text" placeholder="ROOM ID" class="w-32 mr-2" v-model="roomId">
+                    <input @keydown.enter="connection.joinLocal(roomId)" inputmode="numeric" type="text" pattern="^[0-9]+"
+                        placeholder="ROOM ID" class="w-32 mr-2" v-model="roomId">
                     <button @click="connection.joinLocal(roomId)">Join</button>
                 </template>
             </Card>
             <Card secondary title="Join Online 🌐">
                 Join an online game and play the songs on your own device.
                 <template #footer>
-                    <input type="text" placeholder="ROOM ID" class="w-32 mr-2" v-model="roomId">
+                    <input @keydown.enter="connection.joinOnline(roomId)" inputmode="numeric" type="text" pattern="^[0-9]+"
+                        placeholder="ROOM ID" class="w-32 mr-2" v-model="roomId">
                     <button class="secondary" @click="connection.joinOnline(roomId)">Join</button>
                 </template>
             </Card>
