@@ -1,3 +1,4 @@
+import type { SearchItem } from "~/pages/room/[id]/select.vue";
 import { swapRemove } from "./util";
 
 export type Room = {
@@ -6,7 +7,7 @@ export type Room = {
     leaderboard?: [string, string][];
     showLeaderboard?: boolean;
     ownsongs: string[][];
-    downloadQueue: string[][];
+    downloadQueue: string[];
 }
 const defaultRoom: () => Room = () => ({
     id: '',
@@ -91,8 +92,11 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 useRouter().push(`/room/${room.value!.id}/select`);
                 break;
             case 'added_song':
+                if (!room.value) return;
                 const song = JSON.parse(split[1]) as string[];
-                room.value!.ownsongs.push(song);
+                song.push(Math.floor(Math.random() * 1000).toString())
+                room.value.downloadQueue.splice(room.value.downloadQueue.indexOf(song[0]), 1);
+                room.value.ownsongs.push(song);
                 break;
             case 'removed_song':
                 const idx2 = parseInt(split[1]);
@@ -282,11 +286,12 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         isReady.value = false;
     }
 
-    const addSongs = async (songId: string) => {
+    const addSong = async (song: SearchItem) => {
         if (!room.value) return;
         const ws = await getWs();
         if (!ws) return;
-        ws.send(`add ${songId}`);
+        ws.send(`add ${song.id}`);
+        room.value.downloadQueue.push(song.name);
     }
 
     const removeSong = async (currendSongIdx: number) => {
@@ -328,7 +333,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         startingIn,
         isLocal,
         isReady,
-        addSongs,
+        addSong,
         removeSong,
         startGuessing,
         guessOptions,

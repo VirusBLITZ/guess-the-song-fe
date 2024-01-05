@@ -1,6 +1,6 @@
 <script setup lang="ts">
 preloadRouteComponents('guess')
-type SearchItem = {
+export type SearchItem = {
     name: string;
     type: string;
     id: string;
@@ -11,16 +11,26 @@ const showSongListOnMobile = ref(false);
 const connectionHandler = useConnectionHandler();
 const query = ref('');
 const searchBox = ref<HTMLInputElement>();
-const addedSongs = ref<HTMLUListElement>();
+const songsList = ref<HTMLUListElement>();
 
+const songsLen = toRef(() => connectionHandler.room?.ownsongs.length);
+const scrollDown = () => {
+    const el = songsList.value;
+    if (!el) return;
+    // wait for animation from auto-animate
+    setTimeout(() => {
+        el.scrollTo(0, el.scrollHeight);
+    }, 10);
+}
+watch(songsLen, (newVal, oldVal) => {
+    if (!newVal || !oldVal) return;
+    // dont scroll when deleting songs
+    if (newVal < oldVal) return;
+    scrollDown();    
+})
 if (connectionHandler.room) {
-    watch(connectionHandler.room.ownsongs, () => {
-        const el = addedSongs.value;
-        if (!el) return;
-        // wait for animation from auto-animate
-        setTimeout(() => {
-            el.scrollTo(0, el.scrollHeight);
-        }, 10);
+    watch(connectionHandler.room.downloadQueue, () => {
+        scrollDown();
     })
 }
 
@@ -70,10 +80,10 @@ watch(query, async (q) => {
     stoppedTyping(q)
 })
 
-const addSong = (id: string) => {
+const addSong = (song: SearchItem) => {
     query.value = '';
     results.value = [];
-    connectionHandler.addSongs(id)
+    connectionHandler.addSong(song)
     searchBox.value?.focus();
 }
 </script>
@@ -112,7 +122,7 @@ const addSong = (id: string) => {
                         {{ result.type }}
                     </p>
                 </div>
-                <button class="w-7 h-10 mr-1 flex justify-center items-center" @click="addSong(result.id)"> + </button>
+                <button class="w-7 h-10 mr-1 flex justify-center items-center" @click="addSong(result)"> + </button>
             </li>
         </ul>
 
@@ -146,7 +156,7 @@ const addSong = (id: string) => {
             added songs 📑
         </h1>
         <div class="div" />
-        <ul v-auto-animate class="relative h-full inline-block px-2 overflow-y-scroll" ref="addedSongs">
+        <ul v-auto-animate class="relative h-full inline-block px-2 overflow-y-scroll scroll-smooth" ref="songsList">
             <li v-for="song, i in connectionHandler.room?.ownsongs" :key="song[0]"
                 class="bg-zinc-800 duration-150 shadow-zinc-100 my-1 p-1 pl-4 h-13 rounded-md flex items-center justify-between hover:-translate-y-1 overflow-clip last:mb-[4.25rem] 2xl:last:mb-3">
                 <div>
@@ -160,7 +170,22 @@ const addSong = (id: string) => {
                 <button class="w-7 h-10 mr-1 flex justify-center items-center !bg-red-900 font-bold"
                     @click="connectionHandler.removeSong(i)"> 🗑️ </button>
             </li>
-            <li v-if="connectionHandler.room?.ownsongs.length === 0" class="text-center text-gray-400 m-4 mb-5">
+            <div v-if="connectionHandler.room?.downloadQueue.length" class="text-center text-gray-400 m-4 mb-5">
+                👾 Downloading...
+            </div>
+            <li v-for="songName in connectionHandler.room?.downloadQueue" :key="songName"
+                class="relative w-full animate-pulse bg-zinc-700 duration-150 shadow-zinc-100 my-1 p-2 pl-4 text-sm max-h-16 text-ellipsis break-words whitespace-break-spaces rounded-md hover:-translate-y-1 last:mb-[4.25rem] 2xl:last:mb-3">
+                <span class="h-full w-full overflow-clip inline-block">
+                    {{ songName }}
+                </span>
+                <!-- loading ping -->
+                <span
+                    class="absolute -top-1 -left-1 pointer-events-none border-2 bg-[var(--app-c-primary)] border-[var(--app-c-primary)] rounded-md w-3 h-3" />
+                <span
+                    class="absolute -top-1 -left-1 pointer-events-none border-2 border-[var(--app-c-primary)] rounded-md w-3 h-3 animate-ping" />
+            </li>
+            <li v-if="!connectionHandler.room?.ownsongs.length && !connectionHandler.room?.downloadQueue.length"
+                class="text-center text-gray-400 m-4 mb-5">
                 No songs added yet 👀
                 <br>
                 <span class="text-gray-500">
