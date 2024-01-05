@@ -26,7 +26,7 @@ watch(songsLen, (newVal, oldVal) => {
     if (!newVal || !oldVal) return;
     // dont scroll when deleting songs
     if (newVal < oldVal) return;
-    scrollDown();    
+    scrollDown();
 })
 if (connectionHandler.room) {
     watch(connectionHandler.room.downloadQueue, () => {
@@ -134,15 +134,20 @@ const addSong = (song: SearchItem) => {
     </section>
 
     <!-- mobile FAB -->
-    <template class="inline-block lg:hidden" v-auto-animate>
-        <button v-if="!showSongListOnMobile" @click="showSongListOnMobile = true"
-            class="z-[61] fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
-            <span class="text-2xl">📑</span>
-        </button>
-        <button v-if="showSongListOnMobile" @click="showSongListOnMobile = false"
-            class="z-[61] fixed bottom-4 right-4 w-12 h-12 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center">
-            <span class="text-2xl">🔍</span>
-        </button>
+    <template class="inline-block lg:hidden z-[61] !fixed bottom-4 right-4" v-auto-animate>
+        <div class="relative">
+            <button @click="showSongListOnMobile = !showSongListOnMobile"
+                class="w-14 h-14 rounded-full secondary shadow-md shadow-[var(--app-c-primary)] flex justify-center items-center text-2xl">
+                <span v-if="showSongListOnMobile">🔍</span>
+                <span v-else>📑</span>
+            </button>
+            <span class="absolute bg-[var(--app-c-primary)] w-5 h-6 flex justify-center items-center rounded-full -bottom-1 -right-1 pointer-events-none opacity-90">
+                {{ connectionHandler.room?.ownsongs.length  }}
+            </span>
+            <span class="absolute bg-[#4e8ff0] w-5 h-6 flex justify-center items-center rounded-full -bottom-1 -left-1 pointer-events-none opacity-90">
+                {{ connectionHandler.room?.downloadQueue.length  }}
+            </span>
+        </div>
     </template>
 
     <section

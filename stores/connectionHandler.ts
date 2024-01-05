@@ -292,6 +292,9 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
         if (!ws) return;
         ws.send(`add ${song.id}`);
         room.value.downloadQueue.push(song.name);
+        setTimeout(() => {
+            room.value?.downloadQueue.splice(room.value!.downloadQueue.indexOf(song.name), 1);
+        }, 20000);
     }
 
     const removeSong = async (currendSongIdx: number) => {
