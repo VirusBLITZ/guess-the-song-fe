@@ -1,5 +1,23 @@
-# Nuxt 3 Minimal Starter
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
 
+  <h3 align="center">🎶 Guess The Song - Frontend</h3>
+
+  <p align="center">
+    The frontend for Guess The Song, it connects to <a href="https://github.com/VirusBLITZ/guess_the_song_backend">GTS backend</a>
+    <br />
+    <br />
+    <a href="https://gts.bltz.cloud">View Demo</a>
+    ·
+    <a href="https://github.com/VirusBLITZ/guess-the-song-fe/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/VirusBLITZ/guess-the-song-fe/issues">Request Feature</a>
+  </p>
+</div>
+
+
+# Dev Setup
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
@@ -29,7 +47,7 @@ Start the development server on `http://localhost:3000`:
 npm run dev
 
 # pnpm
-pnpm run dev
+pnpm dev
 
 # yarn
 yarn dev
@@ -44,16 +62,13 @@ Build the application for production:
 
 ```bash
 # npm
-npm run build
+npx nuxi@latest generate
 
 # pnpm
-pnpm run build
-
-# yarn
-yarn build
+pnpm dlx nuxi generate
 
 # bun
-bun run build
+bunx run build
 ```
 
 Locally preview production build:
