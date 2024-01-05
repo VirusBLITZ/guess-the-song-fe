@@ -20,8 +20,10 @@ const volume = useState<string>('volume')
                 <span class="mr-14 relative h-14 flex items-center group cursor-pointer z-50">
                     volume
                     <span
+                        @wheel.up="(event: WheelEvent) => volume = String(event.deltaY < 0 ? Math.min(Number(volume) + 2, 100) : Math.max(Number(volume) - 2, 0))"
                         class="z-50 absolute left-0 right-0 -translate-x-1/4 !w-28 -bottom-16 -rotate-90 bg-zinc-800 py-2 px-2 rounded-md shadow-md justify-center items-center hidden group group-hover:inline-flex">
-                        <input type="range" name="volume" id="volume" class="!w-24 !h-3" v-model="volume">
+                        <input type="range" inputmode="decimal" name="volume" id="volume" class="!w-24 !h-3"
+                            v-model="volume">
                     </span>
                 </span>
             </ClientOnly>
