@@ -16,8 +16,8 @@
   </p>
 </div>
 
-
 # Dev Setup
+
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
 ## Setup
@@ -88,3 +88,32 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+## Docker
+
+Build the container image:
+
+```bash
+docker build -t guess-the-song-fe:latest .
+```
+
+Run the container:
+
+```bash
+docker run -d --name guess-the-song-fe -p 8081:8081 guess-the-song-fe:latest
+```
+
+The app will be available at `http://localhost:8081`.
+
+To stop and remove it:
+
+```bash
+docker stop guess-the-song-fe
+docker rm guess-the-song-fe
+```
+
+To view logs:
+
+```bash
+docker logs -f guess-the-song-fe
+```
