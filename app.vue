@@ -10,9 +10,6 @@ const initState = () => {
   const serverBase = useState('serverBase', () => {
     return localStorage.getItem('serverBase') ?? 'gts.bltz.cloud'
   })
-  if (useRoute().query.instance) {
-    serverBase.value = useRoute().query.instance;
-  }
   const username = useState('username', () => {
     return localStorage.getItem('username') ?? 'Anonymous ' + Math.floor(Math.random() * 100)
   })
@@ -31,6 +28,9 @@ const initState = () => {
     useMusicPlayer().volume = Number(value) / 100
     localStorage.setItem('volume', value)
   })
+  if (useRoute().query.instance) {
+    serverBase.value = useRoute().query.instance;
+  }
 }
 
 initState()

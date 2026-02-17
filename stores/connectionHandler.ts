@@ -111,7 +111,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
                 break;
             case 'game_play_audio':
                 const serverBase = useState<string>('serverBase').value;
-                if (process.dev && (serverBase.startsWith("localhost:" || serverBase.startsWith("127.0.0.1")))) {
+                if (process.dev && (serverBase.startsWith("localhost:") || serverBase.startsWith("127.0.0.1"))) {
                     useMusicPlayer().play(`http://${serverBase}${songsRoute.value}/${split[1]}`);
                 } else {
                     useMusicPlayer().play(`https://${serverBase}${songsRoute.value}/${split[1]}`);
@@ -147,7 +147,7 @@ export const useConnectionHandler = defineStore('connectionHandler', () => {
             const serverBase = useState<string>('serverBase').value;
             if (!serverBase) return;
 
-            if (process.dev && (serverBase.startsWith("localhost:" || serverBase.startsWith("127.0.0.1")))) {
+            if (process.dev && (serverBase.startsWith("localhost:") || serverBase.startsWith("127.0.0.1"))) {
                 ws.value = new WebSocket(`ws://${serverBase}/ws`);
             } else {
                 ws.value = new WebSocket(`wss://${serverBase}/ws`);
